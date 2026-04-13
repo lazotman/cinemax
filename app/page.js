@@ -17,7 +17,7 @@ const api = async (path, params = {}) => {
 };
 
 const embedUrl = (id, type = "movie") => 
-  `https://embed.su/embed/${type === "tv" ? "tv" : "movie"}/${id}`;
+  `https://vidsrc.me/embed/${type}?tmdb=${id}`;
 
 // ─── WATCHLIST (localStorage) ────────────────────────────────────────────────
 const WL_KEY = "cinemax_watchlist";
