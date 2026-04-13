@@ -35,7 +35,6 @@ const updateSEO = ({ title, description, image, type = "website", keywords = "" 
   const desc = description || `Watch the latest movies and TV shows free online on ${SITE_NAME}.`;
   const img = image || `${SITE_URL}/og.jpg`;
 
-  // Standard
   const descEl = document.querySelector('meta[name="description"]') || (() => { const e = document.createElement("meta"); e.name = "description"; document.head.appendChild(e); return e; })();
   descEl.content = desc;
 
@@ -44,7 +43,6 @@ const updateSEO = ({ title, description, image, type = "website", keywords = "" 
     kwEl.content = keywords;
   }
 
-  // OG
   [
     ['og:title', title || SITE_NAME],
     ['og:description', desc],
@@ -68,12 +66,10 @@ const updateSEO = ({ title, description, image, type = "website", keywords = "" 
     el.setAttribute("content", val);
   });
 
-  // Canonical
   let canon = document.querySelector('link[rel="canonical"]');
   if (!canon) { canon = document.createElement("link"); canon.rel = "canonical"; document.head.appendChild(canon); }
   canon.href = SITE_URL;
 
-  // Schema.org JSON-LD
   let schema = document.querySelector('#schema-ld');
   if (!schema) { schema = document.createElement("script"); schema.id = "schema-ld"; schema.type = "application/ld+json"; document.head.appendChild(schema); }
   schema.textContent = JSON.stringify({
@@ -133,7 +129,6 @@ input{font-family:${G.body}}
 ::-webkit-scrollbar-track{background:${G.bg}}
 ::-webkit-scrollbar-thumb{background:${G.accent};border-radius:3px}
 
-/* Animations */
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes shimmer{0%{background-position:-600px 0}100%{background-position:600px 0}}
@@ -144,7 +139,6 @@ input{font-family:${G.body}}
 .fade-in{animation:fadeIn .3s ease both}
 .pop-in{animation:popIn .3s ease both}
 
-/* Cards */
 .movie-card{
   border-radius:${G.radius};overflow:hidden;
   background:${G.card};border:1px solid ${G.border};
@@ -165,13 +159,11 @@ input{font-family:${G.body}}
 }
 .movie-card:hover .card-overlay{opacity:1}
 
-/* Shimmer */
 .shimmer{
   background:linear-gradient(90deg,${G.card} 25%,${G.border} 50%,${G.card} 75%);
   background-size:600px 100%;animation:shimmer 1.5s infinite;border-radius:${G.radius}
 }
 
-/* Buttons */
 .btn{border:none;border-radius:7px;font-weight:600;transition:all .18s;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
 .btn-red{background:${G.accent};color:#fff;padding:11px 22px;font-size:.875rem}
 .btn-red:hover{background:${G.accentHover};transform:scale(1.02)}
@@ -182,7 +174,6 @@ input{font-family:${G.body}}
 .btn-icon:hover{background:rgba(255,255,255,.16)}
 .btn-sm{padding:7px 14px;font-size:.78rem;border-radius:6px}
 
-/* Nav */
 .nav{
   position:sticky;top:0;z-index:200;
   background:${G.bg}f0;backdrop-filter:blur(16px);
@@ -208,7 +199,6 @@ input{font-family:${G.body}}
 .search-input::placeholder{color:${G.muted}}
 .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:${G.muted};font-size:.85rem;pointer-events:none}
 
-/* Mobile nav */
 .mobile-search{
   padding:10px clamp(14px,4vw,56px);
   border-bottom:1px solid ${G.border};
@@ -225,14 +215,12 @@ input{font-family:${G.body}}
 .mobile-menu.open{display:flex}
 .mobile-nav-link{color:${G.text};font-size:1.1rem;font-weight:500;padding:14px 0;border-bottom:1px solid ${G.border};cursor:pointer;display:flex;align-items:center;justify-content:space-between}
 
-/* Genre chips */
 .genre-bar{max-width:1400px;margin:0 auto;padding:8px clamp(14px,4vw,56px) 12px}
 .genre-scroll{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
 .genre-scroll::-webkit-scrollbar{display:none}
 .genre-chip{background:${G.card};border:1px solid ${G.border};color:${G.muted};padding:6px 14px;border-radius:20px;font-size:.75rem;font-weight:500;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;transition:all .18s;white-space:nowrap;flex-shrink:0}
 .genre-chip:hover,.genre-chip.active{background:${G.accent};border-color:${G.accent};color:#fff}
 
-/* Hero */
 .hero{position:relative;min-height:min(72vh,600px);display:flex;align-items:center;overflow:hidden}
 .hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%;filter:brightness(.4)}
 .hero-grad{position:absolute;inset:0;background:linear-gradient(to right,${G.bg} 0%,${G.bg}bb 35%,transparent 65%),linear-gradient(to top,${G.bg} 0%,transparent 45%)}
@@ -242,16 +230,10 @@ input{font-family:${G.body}}
 .hero-overview{color:#bfcdd8;font-size:clamp(.875rem,1.5vw,1rem);line-height:1.7;max-width:520px;margin-bottom:24px}
 .hero-actions{display:flex;gap:12px;flex-wrap:wrap}
 
-/* Rating badge */
 .rating{background:${G.gold};color:#000;font-weight:700;font-size:.72rem;padding:3px 8px;border-radius:4px;display:inline-flex;align-items:center;gap:3px;flex-shrink:0}
-
-/* Tag */
 .tag{background:${G.surface};border:1px solid ${G.border};color:${G.muted};padding:3px 9px;border-radius:4px;font-size:.75rem}
-
-/* Badge */
 .badge{display:inline-block;background:${G.accent};color:#fff;font-size:.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:3px}
 
-/* Section */
 .section{margin-bottom:44px}
 .section-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
 .section-title{font-family:${G.font};font-size:clamp(1.3rem,2.5vw,1.8rem);letter-spacing:1.5px}
@@ -259,17 +241,14 @@ input{font-family:${G.body}}
 .section-more{color:${G.accent};font-size:.8rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:opacity .18s}
 .section-more:hover{opacity:.75}
 
-/* Scroll row */
 .scroll-row{display:flex;gap:14px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
 .scroll-row::-webkit-scrollbar{display:none}
 .scroll-item{flex-shrink:0;width:clamp(130px,16vw,185px)}
 
-/* Grid */
 .movie-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px}
 @media(min-width:480px){.movie-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}}
 @media(min-width:768px){.movie-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}}
 
-/* Modal */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:500;display:flex;align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s ease}
 .modal-box{width:100%;max-width:1000px;position:relative}
 .modal-close{position:absolute;top:-42px;right:0;background:none;border:none;color:${G.text};font-size:.85rem;font-weight:600;cursor:pointer;padding:8px;opacity:.8;transition:opacity .18s;display:flex;align-items:center;gap:6px}
@@ -279,7 +258,6 @@ input{font-family:${G.body}}
 .iframe-ratio iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
 .modal-info{background:${G.surface};padding:14px 18px;border-top:1px solid ${G.border}}
 
-/* Detail page */
 .detail-bg{position:relative;min-height:420px;overflow:hidden}
 .detail-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;filter:brightness(.3)}
 .detail-bg-grad{position:absolute;inset:0;background:linear-gradient(to top,${G.bg} 0%,${G.bg}88 40%,transparent 100%)}
@@ -292,7 +270,6 @@ input{font-family:${G.body}}
 .detail-overview{color:${G.soft};font-size:clamp(.875rem,1.5vw,1rem);line-height:1.8;margin-bottom:20px}
 .detail-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
 
-/* Cast */
 .cast-grid{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
 .cast-grid::-webkit-scrollbar{display:none}
 .cast-card{flex-shrink:0;width:90px;text-align:center;cursor:default}
@@ -300,31 +277,24 @@ input{font-family:${G.body}}
 .cast-name{font-size:.72rem;font-weight:600;color:${G.text};line-height:1.3}
 .cast-char{font-size:.68rem;color:${G.muted};margin-top:2px}
 
-/* Trailer */
 .trailer-wrap{border-radius:${G.radius};overflow:hidden;background:#000}
 .trailer-ratio{position:relative;padding-top:56.25%}
 .trailer-ratio iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
 
-/* Watchlist */
 .wl-empty{text-align:center;padding:60px 20px;color:${G.muted}}
 .wl-empty-icon{font-size:3rem;margin-bottom:12px}
 
-/* Search results */
 .search-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
 
-/* Tabs */
 .tabs{display:flex;gap:0;border-bottom:1px solid ${G.border};margin-bottom:24px}
 .tab{background:none;border:none;color:${G.muted};font-size:.875rem;font-weight:600;padding:10px 18px;border-bottom:2px solid transparent;transition:color .18s,border-color .18s;letter-spacing:.3px}
 .tab.active{color:${G.text};border-bottom-color:${G.accent}}
 .tab:hover{color:${G.soft}}
 
-/* Spinner */
 .spinner{width:36px;height:36px;border:3px solid ${G.border};border-top-color:${G.accent};border-radius:50%;animation:spin .8s linear infinite;margin:60px auto}
 
-/* Page wrap */
 .page{max-width:1400px;margin:0 auto;padding:32px clamp(14px,4vw,56px) 60px}
 
-/* Responsive */
 @media(max-width:768px){
   .nav-links{display:none}
   .hamburger{display:block}
@@ -333,6 +303,7 @@ input{font-family:${G.body}}
   .hero{min-height:auto}
   .hero-grad{background:linear-gradient(to top,${G.bg} 0%,${G.bg}99 45%,transparent 100%)}
   .detail-poster{width:clamp(110px,28vw,160px)}
+  .genre-bar{display:none}
 }
 @media(max-width:480px){
   .hero-title{font-size:2rem}
@@ -340,7 +311,6 @@ input{font-family:${G.body}}
   .hero-content{padding:40px 14px}
 }
 
-/* WL button active */
 .wl-btn-active{background:${G.accent}!important;border-color:${G.accent}!important;color:#fff!important}
 `;
 
@@ -425,7 +395,6 @@ const GridSection = ({ movies, onPlay, onDetail, loading }) => {
   );
 };
 
-// Player Modal
 const PlayerModal = ({ movie, type, onClose }) => (
   <div className="modal-bg" onClick={onClose}>
     <div className="modal-box pop-in" onClick={e => e.stopPropagation()}>
@@ -456,7 +425,6 @@ const PlayerModal = ({ movie, type, onClose }) => (
   </div>
 );
 
-// Hero
 const Hero = ({ movie, onPlay, onDetail }) => {
   if (!movie) return null;
   const bg = movie.backdrop_path ? `${IMG}/w1280${movie.backdrop_path}` : null;
@@ -482,7 +450,6 @@ const Hero = ({ movie, onPlay, onDetail }) => {
   );
 };
 
-// Detail Page
 const DetailPage = ({ movieId, movieType, onPlay, onDetail, onBack }) => {
   const [data, setData] = useState(null);
   const [credits, setCredits] = useState(null);
@@ -503,8 +470,6 @@ const DetailPage = ({ movieId, movieType, onPlay, onDetail, onBack }) => {
       setCredits(c);
       setVideos((v.results || []).filter(x => x.site === "YouTube" && (x.type === "Trailer" || x.type === "Teaser")));
       setRelated((r.results || []).filter(x => x.poster_path).slice(0, 12));
-
-      // SEO
       updateSEO({
         title: d.title || d.name,
         description: d.overview,
@@ -528,19 +493,15 @@ const DetailPage = ({ movieId, movieType, onPlay, onDetail, onBack }) => {
 
   return (
     <div className="fade-in">
-      {/* Background */}
       <div className="detail-bg">
         {bg && <img className="detail-bg-img" src={bg} alt="" />}
         <div className="detail-bg-grad" />
         <div className="detail-layout">
           <div className="detail-main">
-            {/* Back */}
             <div style={{ width: "100%", marginBottom: 8 }}>
               <button className="btn btn-ghost btn-sm" onClick={onBack}>← Back</button>
             </div>
-            {/* Poster */}
             {poster && <img className="detail-poster" src={poster} alt={data.title || data.name} />}
-            {/* Info */}
             <div className="detail-info">
               <h1 className="detail-title">{data.title || data.name}</h1>
               <div className="detail-meta">
@@ -560,7 +521,6 @@ const DetailPage = ({ movieId, movieType, onPlay, onDetail, onBack }) => {
         </div>
       </div>
 
-      {/* Tabs */}
       <div className="detail-layout" style={{ marginTop: 32 }}>
         <div className="tabs">
           {["overview", "cast", "trailer", "related"].map(t => (
@@ -645,7 +605,6 @@ const DetailPage = ({ movieId, movieType, onPlay, onDetail, onBack }) => {
   );
 };
 
-// Watchlist Button
 const WatchlistBtn = ({ movie, type }) => {
   const [inWL, setInWL] = useState(() => getWL().some(m => m.id === movie.id));
   const toggle = () => {
@@ -669,7 +628,6 @@ const WatchlistBtn = ({ movie, type }) => {
   );
 };
 
-// Watchlist Page
 const WatchlistPage = ({ onPlay, onDetail }) => {
   const [list, setList] = useState(getWL);
   const remove = (id) => {
@@ -707,7 +665,6 @@ const WatchlistPage = ({ onPlay, onDetail }) => {
   );
 };
 
-// Search Page
 const SearchPage = ({ query, onPlay, onDetail }) => {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -735,7 +692,6 @@ const SearchPage = ({ query, onPlay, onDetail }) => {
   );
 };
 
-// Genre Page
 const GenrePage = ({ genreId, onPlay, onDetail }) => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -757,8 +713,7 @@ const GenrePage = ({ genreId, onPlay, onDetail }) => {
   );
 };
 
-// Movies / TV pages
-const ListPage = ({ title, fetchFn, type, onPlay, onDetail }) => {
+const ListPage = ({ title, type, onPlay, onDetail }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
@@ -788,13 +743,12 @@ const ListPage = ({ title, fetchFn, type, onPlay, onDetail }) => {
 
 // ─── MAIN APP ────────────────────────────────────────────────────────────────
 export default function App() {
-  const [nav, setNav] = useState({ page: "home" }); // {page, ...params}
+  const [nav, setNav] = useState({ page: "home" });
   const [playing, setPlaying] = useState(null);
   const [playType, setPlayType] = useState("movie");
   const [mobileMenu, setMobileMenu] = useState(false);
   const [searchInput, setSearchInput] = useState("");
 
-  // Home data
   const [trending, setTrending] = useState([]);
   const [popular, setPopular] = useState([]);
   const [topRated, setTopRated] = useState([]);
@@ -822,7 +776,10 @@ export default function App() {
   const go = useCallback((page, params = {}) => {
     setNav({ page, ...params });
     setMobileMenu(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // ✅ FIX: window.scrollTo is safe here because go() is only called on client events
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   }, []);
 
   const handlePlay = useCallback((movie, type = "movie") => {
@@ -861,7 +818,6 @@ export default function App() {
     </>
   );
 
-  // Page content
   const renderPage = () => {
     switch (nav.page) {
       case "home":
@@ -893,7 +849,7 @@ export default function App() {
       case "search":
         return <SearchPage query={nav.query} onPlay={handlePlay} onDetail={handleDetail} />;
       case "detail":
-        return <DetailPage movieId={nav.movieId} movieType={nav.movieType} onPlay={handlePlay} onDetail={handleDetail} onBack={() => window.history.go(-1) || go("home")} />;
+        return <DetailPage movieId={nav.movieId} movieType={nav.movieType} onPlay={handlePlay} onDetail={handleDetail} onBack={() => go("home")} />;
       default:
         return null;
     }
@@ -903,10 +859,9 @@ export default function App() {
     <>
       <style>{CSS}</style>
 
-      {/* Mobile menu overlay */}
       <div className={`mobile-menu ${mobileMenu ? "open" : ""}`}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-          <span className="logo" onClick={() => { go("home"); }}>CINEMAX</span>
+          <span className="logo" onClick={() => go("home")}>CINEMAX</span>
           <button style={{ background: "none", border: "none", color: G.text, fontSize: "1.4rem", cursor: "pointer" }} onClick={() => setMobileMenu(false)}>✕</button>
         </div>
         <NavLinks mobile />
@@ -928,7 +883,6 @@ export default function App() {
         </div>
       </div>
 
-      {/* Navbar */}
       <nav className="nav">
         <div className="nav-inner">
           <span className="logo" onClick={() => go("home")}>CINEMAX</span>
@@ -941,8 +895,8 @@ export default function App() {
           </div>
           <button className="hamburger" onClick={() => setMobileMenu(true)}>☰</button>
         </div>
-        {/* Genre bar — desktop */}
-        <div className="genre-bar" style={{ display: window.innerWidth < 768 ? "none" : "block" }}>
+        {/* ✅ FIX: Removed window.innerWidth from render — using CSS media query instead (already in CSS above) */}
+        <div className="genre-bar">
           <div className="genre-scroll">
             {GENRES.map(g => (
               <button
@@ -957,7 +911,6 @@ export default function App() {
         </div>
       </nav>
 
-      {/* Mobile search bar */}
       <div className="mobile-search">
         <form onSubmit={handleSearch} style={{ position: "relative" }}>
           <span className="search-icon">🔍</span>
@@ -965,10 +918,8 @@ export default function App() {
         </form>
       </div>
 
-      {/* Main */}
       <main style={{ minHeight: "80vh" }}>{renderPage()}</main>
 
-      {/* Footer */}
       <footer style={{ background: G.surface, borderTop: `1px solid ${G.border}`, padding: "28px clamp(14px,4vw,56px)", marginTop: 20 }}>
         <div style={{ maxWidth: 1400, margin: "0 auto", display: "flex", gap: 16, alignItems: "center", justifyContent: "space-between", flexWrap: "wrap" }}>
           <div>
@@ -986,7 +937,6 @@ export default function App() {
         </div>
       </footer>
 
-      {/* Player modal */}
       {playing && <PlayerModal movie={playing} type={playType} onClose={() => setPlaying(null)} />}
     </>
   );
