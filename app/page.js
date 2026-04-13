@@ -16,7 +16,8 @@ const api = async (path, params = {}) => {
   return r.json();
 };
 
-const embedUrl = (id, type = "movie") => `https://vidsrc.to/embed/${type}/${id}`;
+const embedUrl = (id, type = "movie") => 
+  `https://embed.su/embed/${type === "tv" ? "tv" : "movie"}/${id}`;
 
 // ─── WATCHLIST (localStorage) ────────────────────────────────────────────────
 const WL_KEY = "cinemax_watchlist";
