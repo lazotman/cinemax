@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
 const TMDB_KEY = "9e1ddea24e6d93bc9571c7b18c0cf493";
 const TMDB = "https://api.themoviedb.org/3";
