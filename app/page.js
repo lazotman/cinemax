@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
-const TMDB_KEY = "9e1ddea24e6d93bc9571c7b18c0cf493";
+const TMDB_KEY = process.env.NEXT_PUBLIC_TMDB_KEY;
 const TMDB = "https://api.themoviedb.org/3";
 const IMG = "https://image.tmdb.org/t/p";
 const SITE_NAME = "CINEMAX";
