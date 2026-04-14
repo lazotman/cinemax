@@ -1,3 +1,5 @@
+import { Analytics } from '@vercel/analytics/react';
+
 export const metadata = {
   title: 'CINEMAX — Watch Free Movies & TV Shows Online',
   description: 'Watch the latest movies and TV shows free online on CINEMAX. Stream trending movies, top rated films and popular TV series.',
@@ -23,7 +25,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <Analytics />
+      </body>
     </html>
   )
 }
