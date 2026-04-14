@@ -1,5 +1,5 @@
 import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata = {
   title: 'CINEMAX — Watch Free Movies & TV Shows Online',
@@ -29,6 +29,7 @@ export default function RootLayout({ children }) {
       <body>
         {children}
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
