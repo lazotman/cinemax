@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
 const TMDB_KEY = process.env.NEXT_PUBLIC_TMDB_KEY;
 const TMDB = "https://api.themoviedb.org/3";
@@ -8,15 +9,22 @@ const IMG = "https://image.tmdb.org/t/p";
 const SITE_NAME = "CINEMAX";
 const SITE_URL = "https://cinemax.me";
 
+// ✅ Cache للـ API — يمنع إعادة الطلب لنفس البيانات
+const apiCache = new Map();
+
 const api = async (path, params = {}) => {
   const u = new URL(`${TMDB}${path}`);
   u.searchParams.set("api_key", TMDB_KEY);
   Object.entries(params).forEach(([k, v]) => u.searchParams.set(k, v));
+  const key = u.toString();
+  if (apiCache.has(key)) return apiCache.get(key);
   const r = await fetch(u);
-  return r.json();
+  const data = await r.json();
+  apiCache.set(key, data);
+  return data;
 };
 
-const embedUrl = (id, type = "movie") => 
+const embedUrl = (id, type = "movie") =>
   `https://vidsrc.me/embed/${type}?tmdb=${id}`;
 
 // ─── WATCHLIST (localStorage) ────────────────────────────────────────────────
@@ -27,12 +35,6 @@ const saveWL = (list) => localStorage.setItem(WL_KEY, JSON.stringify(list));
 // ─── SEO HEAD ────────────────────────────────────────────────────────────────
 const updateSEO = ({ title, description, image, type = "website", keywords = "" }) => {
   document.title = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} — Watch Free Movies & TV Shows Online`;
-  const setMeta = (sel, val) => {
-    let el = document.querySelector(sel);
-    if (!el) { el = document.createElement("meta"); document.head.appendChild(el); }
-    el.setAttribute(sel.includes("property") ? "property" : "name", sel.match(/"([^"]+)"/)?.[1] || "");
-    el.setAttribute("content", val);
-  };
   const desc = description || `Watch the latest movies and TV shows free online on ${SITE_NAME}.`;
   const img = image || `${SITE_URL}/og.jpg`;
 
@@ -111,14 +113,15 @@ const G = {
   text: "#eaeef2",
   muted: "#7a8fa6",
   soft: "#c0cdd8",
-  font: "'Bebas Neue', 'Oswald', sans-serif",
-  body: "'DM Sans', sans-serif",
+  // ✅ استخدام CSS variables بدل Google Fonts import مباشرة
+  font: "var(--font-bebas), 'Oswald', sans-serif",
+  body: "var(--font-dm), 'DM Sans', sans-serif",
   radius: "10px",
 };
 
 // ─── GLOBAL CSS ──────────────────────────────────────────────────────────────
 const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
+/* ✅ حُذف @import Google Fonts — الخطوط تأتي من layout.js عبر next/font */
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
@@ -342,7 +345,8 @@ const MovieCard = ({ movie, onPlay, onDetail, delay = 0 }) => {
     >
       <div className="card-img-wrap">
         {poster
-          ? <img src={poster} alt={title} loading="lazy" />
+          // ✅ أضفنا width و height لتجنب Layout Shift (CLS)
+          ? <img src={poster} alt={title} loading="lazy" width={342} height={513} />
           : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2.5rem", background: G.surface }}>🎬</div>
         }
         <div style={{ position: "absolute", top: 8, right: 8 }}><RatingBadge v={movie.vote_average} /></div>
@@ -431,7 +435,8 @@ const Hero = ({ movie, onPlay, onDetail }) => {
   const bg = movie.backdrop_path ? `${IMG}/w1280${movie.backdrop_path}` : null;
   return (
     <div className="hero">
-      {bg && <img className="hero-bg" src={bg} alt="" />}
+      {/* ✅ أضفنا width و height و fetchpriority للصورة الرئيسية */}
+      {bg && <img className="hero-bg" src={bg} alt="" width={1280} height={720} fetchPriority="high" />}
       <div className="hero-grad" />
       <div className="hero-content">
         <div style={{ marginBottom: 10 }}><span className="badge">🔥 Trending</span></div>
@@ -495,14 +500,15 @@ const DetailPage = ({ movieId, movieType, onPlay, onDetail, onBack }) => {
   return (
     <div className="fade-in">
       <div className="detail-bg">
-        {bg && <img className="detail-bg-img" src={bg} alt="" />}
+        {/* ✅ أضفنا width و height */}
+        {bg && <img className="detail-bg-img" src={bg} alt="" width={1280} height={720} />}
         <div className="detail-bg-grad" />
         <div className="detail-layout">
           <div className="detail-main">
             <div style={{ width: "100%", marginBottom: 8 }}>
               <button className="btn btn-ghost btn-sm" onClick={onBack}>← Back</button>
             </div>
-            {poster && <img className="detail-poster" src={poster} alt={data.title || data.name} />}
+            {poster && <img className="detail-poster" src={poster} alt={data.title || data.name} width={500} height={750} />}
             <div className="detail-info">
               <h1 className="detail-title">{data.title || data.name}</h1>
               <div className="detail-meta">
@@ -559,6 +565,8 @@ const DetailPage = ({ movieId, movieType, onPlay, onDetail, onBack }) => {
                   src={c.profile_path ? `${IMG}/w185${c.profile_path}` : "https://via.placeholder.com/72x72/111820/7a8fa6?text=?"}
                   alt={c.name}
                   loading="lazy"
+                  width={72}
+                  height={72}
                 />
                 <div className="cast-name">{c.name}</div>
                 <div className="cast-char">{c.character}</div>
@@ -759,25 +767,28 @@ export default function App() {
 
   useEffect(() => {
     updateSEO({});
-    Promise.all([
-      api("/trending/movie/week"),
-      api("/movie/popular"),
-      api("/movie/top_rated"),
-      api("/tv/popular"),
-    ]).then(([t, p, tr, tv]) => {
-      setTrending(t.results || []);
-      setPopular(p.results || []);
-      setTopRated(tr.results || []);
-      setTvPopular(tv.results || []);
-      setHero((t.results || []).find(m => m.backdrop_path));
-      setHomeLoading(false);
+    // ✅ نحمّل trending أولاً لإظهار الـ hero بسرعة، ثم الباقي في الخلفية
+    api("/trending/movie/week").then(t => {
+      const results = t.results || [];
+      setTrending(results);
+      setHero(results.find(m => m.backdrop_path));
+
+      Promise.all([
+        api("/movie/popular"),
+        api("/movie/top_rated"),
+        api("/tv/popular"),
+      ]).then(([p, tr, tv]) => {
+        setPopular(p.results || []);
+        setTopRated(tr.results || []);
+        setTvPopular(tv.results || []);
+        setHomeLoading(false);
+      });
     });
   }, []);
 
   const go = useCallback((page, params = {}) => {
     setNav({ page, ...params });
     setMobileMenu(false);
-    // ✅ FIX: window.scrollTo is safe here because go() is only called on client events
     if (typeof window !== "undefined") {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -896,7 +907,6 @@ export default function App() {
           </div>
           <button className="hamburger" onClick={() => setMobileMenu(true)}>☰</button>
         </div>
-        {/* ✅ FIX: Removed window.innerWidth from render — using CSS media query instead (already in CSS above) */}
         <div className="genre-bar">
           <div className="genre-scroll">
             {GENRES.map(g => (
