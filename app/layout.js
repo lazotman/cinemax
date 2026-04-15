@@ -1,5 +1,6 @@
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import Script from 'next/script';
 
 export const metadata = {
   title: 'CINEMAX — Watch Free Movies & TV Shows Online',
@@ -30,6 +31,16 @@ export default function RootLayout({ children }) {
         {children}
         <Analytics />
         <SpeedInsights />
+
+        {/* AdsTerra */}
+        <Script
+          src="https://pl29162095.profitablecpmratenetwork.com/00/8c/61/008c6198bd72e20aa41b394311393d91.js"
+          strategy="afterInteractive"
+        />
+        <Script
+          src="https://pl29162094.profitablecpmratenetwork.com/b4/21/ff/b421ffbf2c27f4e5401d26fe3a7f820c.js"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   )
