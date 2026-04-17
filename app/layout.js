@@ -40,9 +40,24 @@ export const metadata = {
   },
 };
 
+// ✅ viewport منفصل عن metadata — مطلوب في Next.js 14+
+export const viewport = {
+  themeColor: '#07090d',
+  width: 'device-width',
+  initialScale: 1,
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${bebasNeue.variable} ${dmSans.variable}`}>
+      <head>
+        {/* ✅ preconnect يُخبر المتصفح يفتح اتصال مبكر لـ TMDB — يقلل LCP */}
+        <link rel="preconnect" href="https://image.tmdb.org" />
+        <link rel="preconnect" href="https://api.themoviedb.org" />
+        {/* ✅ dns-prefetch fallback للمتصفحات القديمة */}
+        <link rel="dns-prefetch" href="https://image.tmdb.org" />
+        <link rel="dns-prefetch" href="https://api.themoviedb.org" />
+      </head>
       <body>
         {children}
         <Analytics />

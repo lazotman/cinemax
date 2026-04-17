@@ -9,18 +9,31 @@ const IMG = "https://image.tmdb.org/t/p";
 const SITE_NAME = "CINEMAX";
 const SITE_URL = "https://cinemax.me";
 
-// ✅ Cache للـ API — يمنع إعادة الطلب لنفس البيانات
-const apiCache = new Map();
+// ✅ Cache دائم بـ sessionStorage — يبقى بين navigations (5 دقائق)
+// بدل Map() التي تُعاد كل تحميل للصفحة
+const CACHE_TTL = 5 * 60 * 1000;
 
 const api = async (path, params = {}) => {
   const u = new URL(`${TMDB}${path}`);
   u.searchParams.set("api_key", TMDB_KEY);
   Object.entries(params).forEach(([k, v]) => u.searchParams.set(k, v));
-  const key = u.toString();
-  if (apiCache.has(key)) return apiCache.get(key);
+  const key = "cx_" + u.toString();
+
+  try {
+    const cached = sessionStorage.getItem(key);
+    if (cached) {
+      const { data, ts } = JSON.parse(cached);
+      if (Date.now() - ts < CACHE_TTL) return data;
+    }
+  } catch {}
+
   const r = await fetch(u);
   const data = await r.json();
-  apiCache.set(key, data);
+
+  try {
+    sessionStorage.setItem(key, JSON.stringify({ data, ts: Date.now() }));
+  } catch {}
+
   return data;
 };
 
@@ -113,7 +126,6 @@ const G = {
   text: "#eaeef2",
   muted: "#7a8fa6",
   soft: "#c0cdd8",
-  // ✅ استخدام CSS variables بدل Google Fonts import مباشرة
   font: "var(--font-bebas), 'Oswald', sans-serif",
   body: "var(--font-dm), 'DM Sans', sans-serif",
   radius: "10px",
@@ -121,8 +133,6 @@ const G = {
 
 // ─── GLOBAL CSS ──────────────────────────────────────────────────────────────
 const CSS = `
-/* ✅ حُذف @import Google Fonts — الخطوط تأتي من layout.js عبر next/font */
-
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{background:${G.bg};color:${G.text};font-family:${G.body};font-size:16px;line-height:1.5;overflow-x:hidden}
@@ -225,7 +235,9 @@ input{font-family:${G.body}}
 .genre-chip{background:${G.card};border:1px solid ${G.border};color:${G.muted};padding:6px 14px;border-radius:20px;font-size:.75rem;font-weight:500;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;transition:all .18s;white-space:nowrap;flex-shrink:0}
 .genre-chip:hover,.genre-chip.active{background:${G.accent};border-color:${G.accent};color:#fff}
 
-.hero{position:relative;min-height:min(72vh,600px);display:flex;align-items:center;overflow:hidden}
+/* ✅ إصلاح CLS — نحجز الارتفاع بشكل ثابت بدل min-height */
+/* min-height كانت تسبب layout shift لأن الصورة تُغير الحجم عند وصولها */
+.hero{position:relative;height:min(72vh,600px);display:flex;align-items:center;overflow:hidden;contain:layout style}
 .hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%;filter:brightness(.4)}
 .hero-grad{position:absolute;inset:0;background:linear-gradient(to right,${G.bg} 0%,${G.bg}bb 35%,transparent 65%),linear-gradient(to top,${G.bg} 0%,transparent 45%)}
 .hero-content{position:relative;z-index:1;padding:clamp(50px,8vw,90px) clamp(14px,4vw,56px);max-width:680px}
@@ -304,7 +316,8 @@ input{font-family:${G.body}}
   .hamburger{display:block}
   .search-wrap{display:none}
   .mobile-search{display:block}
-  .hero{min-height:auto}
+  /* ✅ إصلاح CLS على الموبايل أيضاً */
+  .hero{height:auto;min-height:320px}
   .hero-grad{background:linear-gradient(to top,${G.bg} 0%,${G.bg}99 45%,transparent 100%)}
   .detail-poster{width:clamp(110px,28vw,160px)}
   .genre-bar{display:none}
@@ -345,7 +358,6 @@ const MovieCard = ({ movie, onPlay, onDetail, delay = 0 }) => {
     >
       <div className="card-img-wrap">
         {poster
-          // ✅ أضفنا width و height لتجنب Layout Shift (CLS)
           ? <img src={poster} alt={title} loading="lazy" width={342} height={513} />
           : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2.5rem", background: G.surface }}>🎬</div>
         }
@@ -430,13 +442,42 @@ const PlayerModal = ({ movie, type, onClose }) => (
   </div>
 );
 
+// ✅ إصلاح CLS في Hero — نحجز المساحة قبل تحميل الصورة
+// وأضفنا preload link ديناميكي لتسريع LCP
 const Hero = ({ movie, onPlay, onDetail }) => {
-  if (!movie) return null;
-  const bg = movie.backdrop_path ? `${IMG}/w1280${movie.backdrop_path}` : null;
+  const bgUrl = movie?.backdrop_path ? `${IMG}/w1280${movie.backdrop_path}` : null;
+
+  useEffect(() => {
+    if (!bgUrl) return;
+    // ✅ preload الصورة الرئيسية فور معرفة الـ URL
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "image";
+    link.href = bgUrl;
+    link.fetchPriority = "high";
+    document.head.appendChild(link);
+    return () => { try { document.head.removeChild(link); } catch {} };
+  }, [bgUrl]);
+
+  if (!movie) return (
+    // ✅ placeholder بنفس الارتفاع يمنع CLS حتى تتحمل بيانات الـ hero
+    <div className="hero" style={{ background: G.surface }} />
+  );
+
   return (
     <div className="hero">
-      {/* ✅ أضفنا width و height و fetchpriority للصورة الرئيسية */}
-      {bg && <img className="hero-bg" src={bg} alt="" width={1280} height={720} fetchPriority="high" />}
+      {/* ✅ fetchPriority="high" + decoding="async" لأسرع عرض ممكن */}
+      {bgUrl && (
+        <img
+          className="hero-bg"
+          src={bgUrl}
+          alt=""
+          width={1280}
+          height={720}
+          fetchPriority="high"
+          decoding="async"
+        />
+      )}
       <div className="hero-grad" />
       <div className="hero-content">
         <div style={{ marginBottom: 10 }}><span className="badge">🔥 Trending</span></div>
@@ -500,7 +541,6 @@ const DetailPage = ({ movieId, movieType, onPlay, onDetail, onBack }) => {
   return (
     <div className="fade-in">
       <div className="detail-bg">
-        {/* ✅ أضفنا width و height */}
         {bg && <img className="detail-bg-img" src={bg} alt="" width={1280} height={720} />}
         <div className="detail-bg-grad" />
         <div className="detail-layout">
