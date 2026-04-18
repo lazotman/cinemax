@@ -7,7 +7,7 @@ const TMDB_KEY = process.env.NEXT_PUBLIC_TMDB_KEY;
 const TMDB = "https://api.themoviedb.org/3";
 const IMG = "https://image.tmdb.org/t/p";
 const SITE_NAME = "CINEMAX";
-const SITE_URL = "https://cinemax.me";
+const SITE_URL = "https://cine-max.live";
 
 // ✅ Cache دائم بـ sessionStorage — يبقى بين navigations (5 دقائق)
 // بدل Map() التي تُعاد كل تحميل للصفحة
