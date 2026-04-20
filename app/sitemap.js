@@ -1,7 +1,7 @@
 export const fetchCache = 'force-no-store'
 
 export default async function sitemap() {
-  const KEY = "9e1ddea24e6d93bc9571c7b18c0cf493"
+  const KEY = "dba50d3bc9d248fb90e8cbe17403ffe7"
   const BASE = "https://cine-max.live"
 
   try {
