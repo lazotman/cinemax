@@ -840,7 +840,9 @@ export default function App() {
   }, []);
 
   const handleDetail = useCallback((movie) => {
-    const type = movie.media_type || (movie.first_air_date !== undefined ? "tv" : "movie");
+  const type = movie.media_type || (movie.first_air_date !== undefined ? "tv" : "movie");
+  window.location.href = `/${type}/${movie.id}`;
+}, []);
     go("detail", { movieId: movie.id, movieType: type });
   }, [go]);
 
