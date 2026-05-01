@@ -843,8 +843,6 @@ export default function App() {
   const type = movie.media_type || (movie.first_air_date !== undefined ? "tv" : "movie");
   window.location.href = `/${type}/${movie.id}`;
 }, []);
-    go("detail", { movieId: movie.id, movieType: type });
-  }, [go]);
 
   const handleSearch = (e) => {
     e.preventDefault();
