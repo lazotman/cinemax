@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+// أضف هذا
+import { useRouter } from "next/navigation";
 
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
 const TMDB_KEY = process.env.NEXT_PUBLIC_TMDB_KEY;
@@ -797,6 +799,7 @@ export default function App() {
   const [playType, setPlayType] = useState("movie");
   const [mobileMenu, setMobileMenu] = useState(false);
   const [searchInput, setSearchInput] = useState("");
+  const router = useRouter();
 
   const [trending, setTrending] = useState([]);
   const [popular, setPopular] = useState([]);
@@ -841,8 +844,8 @@ export default function App() {
 
   const handleDetail = useCallback((movie) => {
   const type = movie.media_type || (movie.first_air_date !== undefined ? "tv" : "movie");
-  window.location.href = `/${type}/${movie.id}`;
-}, []);
+  router.push(`/${type}/${movie.id}`);
+}, [router]);
 
   const handleSearch = (e) => {
     e.preventDefault();
