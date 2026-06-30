@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import SocialShare from "../../components/SocialShare";
 import { useRouter } from "next/navigation";
 
 const TMDB_KEY = process.env.NEXT_PUBLIC_TMDB_KEY;
@@ -8,69 +9,22 @@ const TMDB = "https://api.themoviedb.org/3";
 const IMG = "https://image.tmdb.org/t/p";
 
 const G = {
-  bg: "#07090d", surface: "#0d1117", card: "#111820",
-  border: "#1c2533", accent: "#e50914", accentHover: "#c2070f",
-  gold: "#f5c518", text: "#eaeef2", muted: "#7a8fa6", soft: "#c0cdd8",
-  font: "var(--font-bebas), 'Oswald', sans-serif",
-  body: "var(--font-dm), 'DM Sans', sans-serif",
-  radius: "10px",
+  bg: 'var(--bg)',
+  surface: 'var(--surface)',
+  card: 'var(--card)',
+  border: 'var(--border)',
+  accent: 'var(--accent)',
+  accentHover: 'var(--accent-hover)',
+  gold: 'var(--gold)',
+  text: 'var(--text)',
+  muted: 'var(--muted)',
+  soft: 'var(--soft)',
+  font: 'var(--font-bebas), Oswald, sans-serif',
+  body: 'var(--font-dm), DM Sans, sans-serif',
+  radius: '12px',
 };
 
-const CSS = `
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:${G.bg};color:${G.text};font-family:${G.body};font-size:16px;line-height:1.5}
-img{display:block;max-width:100%}
-button{font-family:${G.body};cursor:pointer}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes shimmer{0%{background-position:-600px 0}100%{background-position:600px 0}}
-.fade-in{animation:fadeIn .3s ease both}
-.spinner{width:36px;height:36px;border:3px solid ${G.border};border-top-color:${G.accent};border-radius:50%;animation:spin .8s linear infinite;margin:80px auto}
-.btn{border:none;border-radius:7px;font-weight:600;transition:all .18s;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;cursor:pointer}
-.btn-red{background:${G.accent};color:#fff;padding:11px 22px;font-size:.875rem}
-.btn-red:hover{background:${G.accentHover};transform:scale(1.02)}
-.btn-ghost{background:rgba(255,255,255,.07);color:${G.text};border:1px solid ${G.border};padding:10px 20px;font-size:.875rem}
-.btn-ghost:hover{background:rgba(255,255,255,.13)}
-.btn-icon{background:rgba(255,255,255,.09);color:${G.text};border:1px solid ${G.border};padding:9px 14px;border-radius:8px;font-size:.8rem}
-.btn-sm{padding:7px 14px;font-size:.78rem;border-radius:6px}
-.badge{display:inline-block;background:#0066ff;color:#fff;font-size:.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:3px}
-.rating{background:${G.gold};color:#000;font-weight:700;font-size:.72rem;padding:3px 8px;border-radius:4px;display:inline-flex;align-items:center;gap:3px}
-.tag{background:${G.surface};border:1px solid ${G.border};color:${G.muted};padding:3px 9px;border-radius:4px;font-size:.75rem}
-.tabs{display:flex;gap:0;border-bottom:1px solid ${G.border};margin-bottom:24px}
-.tab{background:none;border:none;color:${G.muted};font-size:.875rem;font-weight:600;padding:10px 18px;border-bottom:2px solid transparent;transition:color .18s,border-color .18s;letter-spacing:.3px;cursor:pointer}
-.tab.active{color:${G.text};border-bottom-color:${G.accent}}
-.tab:hover{color:${G.soft}}
-.nav{position:sticky;top:0;z-index:200;background:${G.bg}f0;backdrop-filter:blur(16px);border-bottom:1px solid ${G.border}}
-.nav-inner{max-width:1400px;margin:0 auto;padding:0 clamp(14px,4vw,56px);height:60px;display:flex;align-items:center;gap:16px}
-.logo{font-family:${G.font};font-size:1.75rem;letter-spacing:3px;color:${G.accent};cursor:pointer;user-select:none}
-.movie-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px}
-@media(min-width:480px){.movie-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}}
-@media(min-width:768px){.movie-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}}
-.movie-card{border-radius:${G.radius};overflow:hidden;background:${G.card};border:1px solid ${G.border};cursor:pointer;transition:transform .22s ease,box-shadow .22s ease;position:relative}
-.movie-card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.6)}
-.card-img-wrap{position:relative;aspect-ratio:2/3;overflow:hidden;background:${G.surface}}
-.card-img-wrap img{width:100%;height:100%;object-fit:cover}
-.cast-grid{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
-.cast-grid::-webkit-scrollbar{display:none}
-.cast-card{flex-shrink:0;width:90px;text-align:center}
-.cast-photo{width:72px;height:72px;border-radius:50%;object-fit:cover;margin:0 auto 6px;border:2px solid ${G.border};background:${G.surface}}
-.cast-name{font-size:.72rem;font-weight:600;color:${G.text};line-height:1.3}
-.cast-char{font-size:.68rem;color:${G.muted};margin-top:2px}
-.trailer-wrap{border-radius:${G.radius};overflow:hidden;background:#000;max-width:800px}
-.trailer-ratio{position:relative;padding-top:56.25%}
-.trailer-ratio iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:500;display:flex;align-items:center;justify-content:center;padding:16px}
-.modal-box{width:100%;max-width:1000px;position:relative}
-.modal-close{position:absolute;top:-42px;right:0;background:none;border:none;color:${G.text};font-size:.85rem;font-weight:600;cursor:pointer;padding:8px;opacity:.8;display:flex;align-items:center;gap:6px}
-.iframe-wrap{border-radius:${G.radius};overflow:hidden;background:#000}
-.iframe-ratio{position:relative;padding-top:56.25%}
-.iframe-ratio iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
-.modal-info{background:${G.surface};padding:14px 18px;border-top:1px solid ${G.border}}
-.wl-btn-active{background:${G.accent}!important;border-color:${G.accent}!important;color:#fff!important}
-.season-btn{background:${G.card};border:1px solid ${G.border};color:${G.muted};padding:7px 14px;border-radius:6px;font-size:.78rem;cursor:pointer;transition:all .18s;font-family:${G.body};font-weight:500}
-.season-btn.active,.season-btn:hover{background:${G.accent};border-color:${G.accent};color:#fff}
-.ep-scroll{display:flex;flex-wrap:wrap;gap:6px;max-height:120px;overflow-y:auto;scrollbar-width:thin}
-`;
+const CSS = ``;
 
 const CACHE_TTL = 5 * 60 * 1000;
 
@@ -179,7 +133,7 @@ export default function TVDetailClient({ id }) {
 
   if (!data) return (
     <>
-      <style>{CSS}</style>
+      
       <nav className="nav"><div className="nav-inner"><span className="logo" onClick={() => router.push("/")}>CINEMAX</span></div></nav>
       <div className="spinner" />
     </>
@@ -197,7 +151,7 @@ export default function TVDetailClient({ id }) {
 
   return (
     <>
-      <style>{CSS}</style>
+      
 
       {/* NAV */}
       <nav className="nav">
