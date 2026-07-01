@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import SocialShare from "../../components/SocialShare";
+import SocialShare from "../../../components/SocialShare";
 import { useRouter } from "next/navigation";
 
 const TMDB_KEY = process.env.NEXT_PUBLIC_TMDB_KEY;

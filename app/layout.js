@@ -23,12 +23,6 @@ export const metadata = {
   description: 'Watch the latest movies and TV shows free online on CINEMAX. Stream trending movies, top rated films and popular TV series.',
   keywords: 'watch movies online free, free streaming, movies, TV shows, series, CINEMAX',
   metadataBase: new URL('https://cine-max.live'),
-  manifest: '/manifest.json',
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'black-translucent',
-    title: 'CINEMAX'
-  },
   verification: {
     google: 'qt27q0OBKHn3Zj44aV6VpneQ-DJsMQsmoY1Sptmb05E',
   },
@@ -68,23 +62,6 @@ export default function RootLayout({ children }) {
         {children}
         <Analytics />
         <SpeedInsights />
-        
-        <Script id="sw-register" strategy="afterInteractive">
-          {`
-            if ('serviceWorker' in navigator) {
-              window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js').then(
-                  function(registration) {
-                    console.log('ServiceWorker registration successful');
-                  },
-                  function(err) {
-                    console.log('ServiceWorker registration failed: ', err);
-                  }
-                );
-              });
-            }
-          `}
-        </Script>
 
         {/* ✅ lazyOnload — يحمّل الإعلانات بعد اكتمال الصفحة كاملاً */}
         <Script
